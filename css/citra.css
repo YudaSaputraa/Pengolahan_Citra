@@ -1,0 +1,85 @@
+body  {
+    margin-top: 70px;
+    -webkit-font-smoothing:  antialiased;
+    overflow-x: hidden;
+}
+*{
+    font-family: 'Poppins', sans-serif;
+}
+#page.container  {
+    margin:  4em auto;
+}
+
+#sidebar .operation > button  {
+    display: block;
+    width: 100%;
+    padding: 5px 10px;
+    text-align: left;
+    font-weight: bold;
+}
+input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: #084cdf;
+  padding: 8px 17px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+  background: #0d45a5;
+}
+
+/*
+.row > div { padding: 0; }
+.well { margin-bottom: 0; }
+*/
+
+#main .imgtitle,
+#main .imgbox,
+#main .imginfo  {
+    display: block;
+    text-align: center;
+}
+
+#main .imgtitle  {
+	font-weight: bold;
+    font-size: 14px;
+    margin-top: 0;
+}
+
+#main .imginfo  {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#hist  {
+    display:  none;
+    margin-bottom: 20px;
+}
+
+#kanvas  {
+    width: 100%;
+}
+
+#hist .imginfo  {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
+.card{
+    width: 100%;
+    min-height: 20px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}

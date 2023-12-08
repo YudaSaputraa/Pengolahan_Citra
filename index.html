@@ -1,0 +1,179 @@
+<!doctype HTML>
+<html>
+
+<head>
+	<title>Pengolahan Citra</title>
+	<meta name="charset" content="utf-8">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css">
+	<link rel="stylesheet" type="text/css" href="css/citra.css">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap"
+		rel="stylesheet" />
+
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="./">Photo<span>Shock</span>.</a>
+			</div>
+
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+
+				<ul class="nav navbar-nav">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Operasi Citra <b
+								class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#negatifImage()">Citra Negatif</a></li>
+							<li><a href="#grayscaleImage()">Citra Greyscale</a></li>
+							<li><a href="#hitamPutihImage()">Citra Biner</a></li>
+							<li><a href="#putihHitamImage()">Citra NOT</a></li>
+						</ul>
+					</li>
+					<li><a href="#gaussianFilter(3)">Gaussian Blur</a></li>
+					<li><a href="#tepiSobel()">Tepi Sobel</a></li>
+
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#resetGambar()">Reset</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="page" class="container">
+		<div id="sidebar" class="col-sm-3 col-md-3 col-lg-3">
+			<form role="search">
+
+				<div class="form-group">
+					<label for="images" class="drop-container" id="dropcontainer">
+						<span class="drop-title">Drop files here</span>
+
+						<input type="file" id="imgFile" accept="image/*" class="form-control" required>
+					</label>
+				</div>
+			</form>
+			<span class="drop-title">Image Resolution : </span>
+			<div class="well light">
+
+				<div class="imginfo">
+					<div id="imgwidth"></div>
+					<div id="imgheight"></div>
+					<div id="imglength"></div>
+				</div>
+			</div>
+			<div class="well light">
+				Brightness:
+				<input id="inp-brightness" class="form-range" type="range" value="0" min="-100" max="100" step="5"
+					style="width:100%">
+				Contrass:
+				<input id="inp-contrass" class="form-range" type="range" value="0" min="-30" max="30"
+					style="width:100%">
+
+			</div>
+			<div class="video-preview">
+				<video id="video"></video>
+			</div>
+		</div>
+		<div id="main" class="col-sm-9 col-md-9 col-lg-9">
+			<div id="hist" class="well">
+				<span class="imginfo">Histogram Citra <a href="#"
+						onclick="$('#hist').slideUp();return false;">(Close)</a></span>
+				<div id="bar-chart"></div>
+			</div>
+			<div class="gambar well">
+				<h2 class="imgtitle"><span>Citra Normal</span></h2>
+				<span class="imgbox"><canvas id="kanvas"></span>
+			</div>
+		</div>
+
+	</div>
+
+</body>
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript" src="js/operasiCitra.js"></script>
+<script type="text/javascript">
+	$("#inp-brightness").change(function () {
+		var inp = $(this).val();
+
+		if ($(this).data('old-value') < $(this).val()) {
+			inp = -1 * inp;
+		} else {
+			inp = 1 * inp;
+		}
+
+		// reset gambar
+		ctx.drawImage(myImg, 0, 0);
+
+		var dataGambar = ctx.getImageData(0, 0, cvs.width, cvs.height);
+
+		// manipulation
+		for (var i = 0; i < dataGambar.data.length; i += 4) {
+			dataGambar.data[i] = dataGambar.data[i] + inp;
+			if (dataGambar.data[i] < 0) dataGambar.data[i] = 0;
+			else if (dataGambar.data[i] > 255) dataGambar.data[i] = 255;
+
+			dataGambar.data[i + 1] = dataGambar.data[i + 1] + inp;
+			if (dataGambar.data[i + 1] < 0) dataGambar.data[i + 1] = 0;
+			else if (dataGambar.data[i + 1] > 255) dataGambar.data[i + 1] = 255;
+
+			dataGambar.data[i + 2] = dataGambar.data[i + 2] + inp;
+			if (dataGambar.data[i + 2] < 0) dataGambar.data[i + 2] = 0;
+			else if (dataGambar.data[i + 2] > 255) dataGambar.data[i + 2] = 255;
+		}
+
+		// menampilkan hasil
+		ctx.putImageData(dataGambar, 0, 0);
+	});
+	$("#inp-contrass").change(function () {
+		var kontrasInput = $(this).val();
+		var faktorKontras = 0.3;
+
+		if ($(this).data('old-value') < $(this).val()) { // membandingkan value lama dengan value sekarang
+			kontrasInput = -1 * kontrasInput;
+		} else {
+			kontrasInput = 1 * kontrasInput;
+		}
+		// Reset gambar
+		ctx.drawImage(myImg, 0, 0);
+		// Baca data gambar
+		var imageData = ctx.getImageData(0, 0, cvs.width, cvs.height);
+		// Manipulasi data
+		for (var i = 0; i < imageData.data.length; i += 4) {
+			imageData.data[i] = (faktorKontras * (imageData.data[i] - kontrasInput)) + kontrasInput;
+			if (imageData.data[i] < 0) imageData.data[i] = 0; // menghitung komponen R/red
+			else if (imageData.data[i] > 255) imageData.data[i] = 255;
+			//Misalkan kita memiliki piksel dengan komponen warna R, G, dan B awal
+			//masing-masing adalah 150, 100, dan 200. Anggap faktorKontras adalah 0.3,//
+			//dan kontrasInput adalah 50 (sebagai contoh).
+			// Komponen R baru:
+			// imageData.data[i] = (0.3 * (150 - 50)) + 50;
+			// imageData.data[i] = 90 + 50;
+			// imageData.data[i] = 140;
+			imageData.data[i + 1] = (faktorKontras * (imageData.data[i + 1] - kontrasInput)) + kontrasInput;
+			if (imageData.data[i + 1] < 0) imageData.data[i + 1] = 0; // menghitung komponen G/green
+			else if (imageData.data[i + 1] > 255) imageData.data[i + 1] = 255;
+
+			imageData.data[i + 2] = (faktorKontras * (imageData.data[i + 2] - kontrasInput)) + kontrasInput;
+			if (imageData.data[i + 2] < 0) imageData.data[i + 2] = 0; // menghitung komponen B/Blue
+			else if (imageData.data[i + 2] > 255) imageData.data[i + 2] = 255;
+		}
+		ctx.putImageData(imageData, 0, 0);
+	});
+
+
+</script>
+
+</html>
